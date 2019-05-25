@@ -28,7 +28,7 @@
           "examples": [
             "2018-11-09T13:03:27.789244"
           ],
-          "pattern": "^(.+)$"
+          "pattern": "^(\\d{4})(?:-?W(\\d+)(?:-?(\\d+)D?)?|(?:-(\\d+))?-(\\d+))(?:[T ](\\d+):(\\d+)(?::(\\d+)(?:\\.(\\d+))?)?)?(?:Z(-?\\d*))?$"
         },
         "DC.date": {
           "type": "string",
@@ -36,7 +36,7 @@
           "examples": [
             "2018-11-09T13:05:27.789244"
           ],
-          "pattern": "^(.+)$"
+          "pattern": "^(\\d{4})(?:-?W(\\d+)(?:-?(\\d+)D?)?|(?:-(\\d+))?-(\\d+))(?:[T ](\\d+):(\\d+)(?::(\\d+)(?:\\.(\\d+))?)?)?(?:Z(-?\\d*))?$"
         },
         "DC.creator": {
           "type": "string",
@@ -193,27 +193,9 @@
       },
       "additionalProperties": false
     },
-    "features": {
-      "description": "Linguistic features, corresponding to the ConLL format",
-      "type": "object",
-      "patternProperties": {
-        "^[A-Z0-9][A-Z0-9a-z]*(\\[[a-z0-9]+\\])?$": {
-          "type": "string",
-          "pattern": "^[A-Z0-9][a-zA-Z0-9]*$"
-        }
-      },
-      "additionalProperties": false
-    },
     "misc": {
-      "description": "Miscellaneous features, corresponding to the ConLL format",
-      "type": "object",
-      "patternProperties": {
-        "^[A-Z0-9][A-Z0-9a-z]*(\\[[a-z0-9]+\\])?$": {
-          "type": "string",
-          "pattern": "^[A-Z0-9][a-zA-Z0-9]*$"
-        }
-      },
-      "additionalProperties": false
+      "description": "Miscellaneous features",
+      "type": "object"
     },
     "label": {
       "type": "object",
@@ -275,622 +257,617 @@
     "meta": {
       "$ref": "#/definitions/meta"
     },
-    "conll": {
-      "description": "Metadata for parsing to and from CoNLL formats",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "sentence_ids": {
-          "description": "Are sentence ids provided for each sentence",
-          "type": "boolean",
-          "default": false
-        }
-      }
-    },
     "documents": {
       "$id": "#/properties/documents",
       "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["tokenList"],
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Document ID",
-            "pattern": "^.+$"
-          },
-          "meta": {
-            "$ref": "#/definitions/meta"
-          },
-          "text": {
-            "$id": "#/properties/documents/text",
-            "type": "string",
-            "description": "The unprocessed text of the document",
-            "examples": [
-              "I fed my dog yesterday. He is the best."
-            ],
-            "pattern": "^(.+)$"
-          },
-          "embeddings": {
-            "$ref": "#/definitions/embeddings"
-          },
-          "features": {
-            "$ref": "#/definitions/features"
-          },
-          "scores": {
-            "$ref": "#/definitions/scores"
-          },
-          "labels": {
-            "$ref": "#/definitions/labels"
-          },
-          "paragraphs": {
-            "$id": "#/properties/documents/paragraphs",
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "required": [
-                "id",
-                "tokens"
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tokenList"],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Document ID"
+            },
+            "meta": {
+              "$ref": "#/definitions/meta"
+            },
+            "text": {
+              "$id": "#/properties/documents/text",
+              "type": "string",
+              "description": "The unprocessed text of the document",
+              "examples": [
+                "I fed my dog yesterday. He is the best."
               ],
-              "additionalProperties": false,
-              "properties": {
-                "id": {
-                  "type": "integer",
-                  "description": "Unique paragraph ID"
-                },
-                "conllId": {
-                  "type": "string",
-                  "description": "Unique paragraph ID"
-                },
-                "tokens": {
-                  "$ref": "#/definitions/tokenIdList"
-                },
-                "embeddings": {
-                  "$ref": "#/definitions/embeddings"
-                },
-                "features": {
-                  "$ref": "#/definitions/features"
-                },
-                "scores": {
-                  "$ref": "#/definitions/scores"
-                },
-                "labels": {
-                  "$ref": "#/definitions/labels"
+              "pattern": "^(.+)$"
+            },
+            "embeddings": {
+              "$ref": "#/definitions/embeddings"
+            },
+            "scores": {
+              "$ref": "#/definitions/scores"
+            },
+            "labels": {
+              "$ref": "#/definitions/labels"
+            },
+            "paragraphs": {
+              "$id": "#/properties/documents/paragraphs",
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "tokens"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Unique paragraph ID"
+                  },
+                  "conllId": {
+                    "type": "string",
+                    "description": "Unique paragraph ID"
+                  },
+                  "tokens": {
+                    "$ref": "#/definitions/tokenIdList"
+                  },
+                  "embeddings": {
+                    "$ref": "#/definitions/embeddings"
+                  },
+                  "scores": {
+                    "$ref": "#/definitions/scores"
+                  },
+                  "labels": {
+                    "$ref": "#/definitions/labels"
+                  }
                 }
               }
-            }
-          },
-          "sentences": {
-            "$id": "#/properties/documents/sentences",
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "required": [
-                "tokenFrom",
-                "tokenTo"
-              ],
+            },
+            "sentences": {
+              "$id": "#/properties/documents/sentences",
               "additionalProperties": false,
-              "properties": {
-                "id": {
-                  "type": "integer",
-                  "description": "Unique sentence ID"
-                },
-                "conllId": {
-                  "type": "string",
-                  "description": "Unique sentence ID"
-                },
-                "text": {
-                  "type": "string",
-                  "description": "The text of this sentence"
-                },
-                "translations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "lang",
-                      "text"
-                    ],
-                    "additionalProperties": false,
-                    "properties": {
-                      "lang": {
-                        "type": "string",
-                        "description": "Two-character language code",
-                        "pattern": "[a-z]{2}"
-                      },
-                      "text": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "tense": {
-                  "type": "string",
-                  "pattern": "^(past|present|future|past-perfect|future-perfect)$"
-                },
-                "transitivity": {
-                  "type": "string",
-                  "pattern": "^(transitive|intransitive|ditransitive)$"
-                },
-                "negated": {
-                  "type": "boolean",
-                  "default": false
-                },
-                "root": {
-                  "description": "Token id corresponding to the root",
-                  "type": "integer"
-                },
-                "mainVerb": {
-                  "$ref": "#/definitions/grammar"
-                },
-                "subject": {
-                  "$ref": "#/definitions/grammar"
-                },
-                "object": {
-                  "$ref": "#/definitions/grammar"
-                },
-                "indirectObject": {
-                  "$ref": "#/definitions/grammar"
-                },
-                "tokenFrom": {
-                  "type": "integer",
-                  "description": "Start token, inclusive"
-                },
-                "tokenTo": {
-                  "type": "integer",
-                  "description": "End token, exclusive"
-                },
-                "tokens": {
-                  "$ref": "#/definitions/tokenIdList"
-                },
-                "labels": {
-                  "$ref": "#/definitions/labels"
-                },
-                "complex": {
-                  "type": "boolean",
-                  "default": false
-                },
-                "compound": {
-                  "type": "boolean",
-                  "default": false
-                },
-                "fragment": {
-                  "type": "boolean",
-                  "default": false
-                },
-                "type": {
-                  "type": "string",
-                  "pattern": "^(interrogative|alternative_question|declarative_question|direct_question|indirect_question|display_question|echo_question|embedded_question|hypophora|leading_question|declarative|rhetorical_question|tag_question|wh_question|whimperative|yes_no_question)$"
-                },
-                "embeddings": {
-                  "$ref": "#/definitions/embeddings"
-                },
-                "features": {
-                  "$ref": "#/definitions/features"
-                },
-                "scores": {
-                  "$ref": "#/definitions/scores"
-                }
-              }
-            }
-          },
-          "clauses": {
-            "$id": "#/properties/documents/clauses",
-            "type": "object",
-            "additionalProperties": {
               "type": "object",
-              "required": [
-                "id",
-                "sentenceId",
-                "type",
-                "root",
-                "tokens"
-              ],
-              "additionalProperties": false,
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "sentenceId": {
-                  "type": "integer",
-                  "description": "Reference to the containing sentence"
-                },
-                "parentClauseId": {
-                  "type": "integer",
-                  "description": "Reference to the containing clause"
-                },
-                "tense": {
-                  "type": "string",
-                  "pattern": "^(past|present|future|past-perfect|future-perfect)$"
-                },
-                "type": {
-                  "type": "string",
-                  "pattern": "^(matrix|complement|relative|adverbial|adjectival|subject)$"
-                },
-                "transitivity": {
-                  "type": "string",
-                  "pattern": "^(transitive|intransitive|ditransitive)$"
-                },
-                "negated": {
-                  "type": "boolean",
-                  "default": false
-                },
-                "mainVerb": {
-                  "$ref": "#/definitions/grammar"
-                },
-                "subject": {
-                  "$ref": "#/definitions/grammar"
-                },
-                "object": {
-                  "$ref": "#/definitions/grammar"
-                },
-                "indirectObject": {
-                  "$ref": "#/definitions/grammar"
-                },
-                "root": {
-                  "description": "Token id corresponding to the root",
-                  "type": "integer"
-                },
-                "tokens": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer"
-                  }
-                },
-                "features": {
-                  "$ref": "#/definitions/features"
-                },
-                "embeddings": {
-                  "$ref": "#/definitions/embeddings"
-                },
-                "scores": {
-                  "$ref": "#/definitions/scores"
-                },
-                "labels": {
-                  "$ref": "#/definitions/labels"
-                }
-              }
-            }
-          },
-          "tokenList": {
-            "$id": "#/properties/documents/tokenList",
-            "type": "object",
-            "description": "A mapping of tokens objects in the document",
-            "additionalProperties": {
-              "$id": "#/properties/documents/tokenList/items",
-              "type": "object",
-              "description": "A single token",
-              "required": [
-                "id",
-                "text"
-              ],
-              "additionalProperties": false,
-              "properties": {
-                "id": {
-                  "type": "integer",
-                  "description": "Token ids start from 1, and are cumulative for the entire document.",
-                  "minimum": 1
-                },
-                "text": {
-                  "type": "string",
-                  "description": "The character string consisting of the token text",
-                  "examples": [
-                    "This",
-                    "is",
-                    "a",
-                    "schema"
-                  ],
-                  "pattern": "^(.+)$"
-                },
-                "features": {
-                  "$ref": "#/definitions/features"
-                },
-                "misc": {
-                  "$ref": "#/definitions/misc"
-                },
-                "scores": {
-                  "$ref": "#/definitions/scores"
-                },
-                "lemma": {
-                  "type": "string",
-                  "pattern": "^(.+)$"
-                },
-                "stem": {
-                  "type": "string",
-                  "pattern": "^(.+)$"
-                },
-                "characterOffsetBegin": {
-                  "type": "integer",
-                  "description": "The inclusive character index in the sentence where this token begins"
-                },
-                "characterOffsetEnd": {
-                  "type": "integer",
-                  "description": "The exclusive character index in the sentence where this token ends"
-                },
-                "upos": {
-                  "type": "string",
-                  "description": "Universal part of speech tag",
-                  "examples": [
-                    "Noun",
-                    "Verb"
-                  ],
-                  "pattern": "^(.+)$"
-                },
-                "xpos": {
-                  "type": "string",
-                  "description": "Language-specific part of speech tag",
-                  "examples": [
-                    "NNP",
-                    "VBZ"
-                  ],
-                  "pattern": "^(.+)$"
-                },
-                "morphemes": {
-                  "type": "array",
-                  "minItems": 1,
-                  "uniqueItems": true,
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "shape": {
-                  "type": "string",
-                  "description": "Token shape",
-                  "examples": ["Xxx", "xXxxX"],
-                  "pattern": "^[xX]+$"
-                },
-                "entity": {
-                  "type": "string",
-                  "description": "The Named Entity label",
-                  "examples": [
-                    "GPE",
-                    "PERSON",
-                    "EMAIL"
-                  ]
-                },
-                "entity_iob": {
-                  "type": "string",
-                  "description": "The Named Entity IOB Schema",
-                  "examples": [
-                    "I",
-                    "O",
-                    "B"
-                  ],
-                  "pattern": "^[IOB]$"
-                },
-                "lang": {
-                  "type": "string",
-                  "description": "ISO 639-2 language code",
-                  "pattern": "^[a-z]{2,3}$"
-                },
-                "speaker": {
-                  "type": "string",
-                  "examples": [
-                    "S1",
-                    "S2"
-                  ]
-                },
-                "synsets": {
+              "patternProperties":{
+                "^[0-9]+$": {
                   "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "required": ["wordnetId"],
-                    "additionalProperties": false,
-                    "properties": {
-                      "scores": {
-                        "$ref": "#/definitions/scores"
-                      },
-                      "wordnetId": {
-                        "type": "string",
-                        "examples": [
-                          "bank.n.01",
-                          "bank.v.02"
+                  "required": [
+                    "tokenFrom",
+                    "tokenTo"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "Unique sentence ID"
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "The text of this sentence"
+                    },
+                    "translations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "lang",
+                          "text"
                         ],
-                        "pattern": "^[a-z_]+\\.[a-z]\\.\\d{2}$"
-                      },
-                      "neighbors": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "synonyms": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "antonyms": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "hypernyms": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "hyponyms": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "examples": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "definition": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "verbFrames": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "required": ["classId"],
-                    "additionalProperties": true,
-                    "properties": {
-                      "classId": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "frames": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "required": ["name", "frameId"],
-                    "additionalProperties": true,
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "frameId": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "embeddings": {
-                  "$ref": "#/definitions/embeddings"
-                },
-                "characterEmbeddings": {
-                  "$id": "#/properties/documents/tokenList/items/properties/characterEmbeddings",
-                  "type": "array",
-                  "description": "Store character embeddings as 2D matrix",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "vector"
-                    ],
-                    "properties": {
-                      "model": {
-                        "type": "string",
-                        "pattern": "^(.+)$"
-                      },
-                      "vector": {
-                        "type": "array",
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "type": "number"
+                        "additionalProperties": false,
+                        "properties": {
+                          "lang": {
+                            "type": "string",
+                            "description": "Two-character language code",
+                            "pattern": "[a-z]{2,3}"
+                          },
+                          "text": {
+                            "type": "string"
                           }
                         }
                       }
-                    }
-                  }
-                },
-                "labels": {
-                  "$ref": "#/definitions/labels"
-                }
-              }
-            }
-          },
-          "dependencies": {
-            "$id": "#/properties/documents/dependencies",
-            "description": "Dependency graphs of any style",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": ["arcs", "style"],
-              "properties": {
-                "style": {
-                  "type": "string",
-                  "examples": ["collapsed", "universal", "enhanced", "enhanced++"]
-                },
-                "arcs": {
-                  "type": "object",
-                  "description": "A mapping of dependent token id to a list of governors",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": [
-                        "sentenceId",
-                        "label",
-                        "governor"
-                      ],
-                      "additionalProperties": false,
-                      "properties": {
-                        "sentenceId": {
-                          "type": "integer"
-                        },
-                        "label": {
-                          "type": "string",
-                          "examples": ["nsubj"]
-                        },
-                        "governor": {
-                          "type": "integer",
-                          "description": "Token Id corresponding to the governor"
-                        },
-                        "dependent": {
-                          "type": "integer",
-                          "description": "Token Id corresponding to the dependent"
-                        },
-                        "scores": {
-                          "$ref": "#/definitions/scores"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "coreferences": {
-            "$id": "#/properties/documents/coreferences",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": [
-                "id",
-                "representative",
-                "referents"
-              ],
-              "additionalProperties": false,
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "scores": {
-                  "$ref": "#/definitions/scores"
-                },
-                "representative": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "head",
-                    "tokens"
-                  ],
-                  "properties": {
-                    "head": {
+                    },
+                    "tense": {
+                      "type": "string",
+                      "pattern": "^(past|present|future|past-perfect|future-perfect)$"
+                    },
+                    "transitivity": {
+                      "type": "string",
+                      "pattern": "^(transitive|intransitive|ditransitive)$"
+                    },
+                    "negated": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "root": {
+                      "description": "Token id corresponding to the root",
                       "type": "integer"
                     },
-                    "entity": {
-                      "type": "string",
-                      "description": "What type of entity is this",
-                      "examples": ["PERSON", "GPE"],
-                      "pattern": ".+"
+                    "mainVerb": {
+                      "$ref": "#/definitions/grammar"
+                    },
+                    "subject": {
+                      "$ref": "#/definitions/grammar"
+                    },
+                    "object": {
+                      "$ref": "#/definitions/grammar"
+                    },
+                    "indirectObject": {
+                      "$ref": "#/definitions/grammar"
+                    },
+                    "tokenFrom": {
+                      "type": "integer",
+                      "description": "Start token, inclusive"
+                    },
+                    "tokenTo": {
+                      "type": "integer",
+                      "description": "End token, exclusive"
                     },
                     "tokens": {
                       "$ref": "#/definitions/tokenIdList"
+                    },
+                    "labels": {
+                      "$ref": "#/definitions/labels"
+                    },
+                    "complex": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "compound": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "fragment": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "type": {
+                      "type": "string",
+                      "pattern": "^(interrogative|alternative_question|declarative_question|direct_question|indirect_question|display_question|echo_question|embedded_question|hypophora|leading_question|declarative|rhetorical_question|tag_question|wh_question|whimperative|yes_no_question)$"
+                    },
+                    "embeddings": {
+                      "$ref": "#/definitions/embeddings"
+                    },
+                    "scores": {
+                      "$ref": "#/definitions/scores"
                     }
                   }
-                },
-                "referents": {
-                  "type": "array",
-                  "items": {
+                }  
+              }
+            },
+            "clauses": {
+              "$id": "#/properties/documents/clauses",
+              "type": "object",
+              "additionalProperties": false,
+              "patternProperties": {
+                "^[0-9]+$":{
+                  "required": [
+                  "id",
+                  "sentenceId",
+                  "root",
+                  "tokens"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "sentenceId": {
+                      "type": "integer",
+                      "description": "Reference to the containing sentence"
+                    },
+                    "parentClauseId": {
+                      "type": "integer",
+                      "description": "Reference to the containing clause"
+                    },
+                    "tense": {
+                      "type": "string",
+                      "pattern": "^(past|present|future|past-perfect|future-perfect)$"
+                    },
+                    "type": {
+                      "type": "string",
+                      "pattern": "^(matrix|complement|relative|adverbial|adjectival|subject)$"
+                    },
+                    "transitivity": {
+                      "type": "string",
+                      "pattern": "^(transitive|intransitive|ditransitive)$"
+                    },
+                    "negated": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "mainVerb": {
+                      "$ref": "#/definitions/grammar"
+                    },
+                    "subject": {
+                      "$ref": "#/definitions/grammar"
+                    },
+                    "object": {
+                      "$ref": "#/definitions/grammar"
+                    },
+                    "indirectObject": {
+                      "$ref": "#/definitions/grammar"
+                    },
+                    "root": {
+                      "description": "Token id corresponding to the root",
+                      "type": "integer"
+                    },
+                    "tokens": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    },
+                    "embeddings": {
+                      "$ref": "#/definitions/embeddings"
+                    },
+                    "scores": {
+                      "$ref": "#/definitions/scores"
+                    },
+                    "labels": {
+                      "$ref": "#/definitions/labels"
+                    }
+                  }
+                }
+              }
+            },
+            "tokenList": {
+              "$id": "#/properties/documents/tokenList",
+              "type": "object",
+              "description": "A mapping of tokens objects in the document",
+              "patternProperties":{
+                "^[0-9]+$":{
+                  "$id": "#/properties/documents/tokenList/items",
+                  "type": "object",
+                  "description": "A single token",
+                  "required": [
+                    "id",
+                    "text"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "Token ids start from 1, and are cumulative for the entire document.",
+                      "minimum": 1
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "The character string consisting of the token text",
+                      "examples": [
+                        "This",
+                        "is",
+                        "a",
+                        "schema"
+                      ],
+                      "pattern": "^(.+)$"
+                    },
+                    "features": {
+                      "type": "object",
+                      "properties": {
+                        "Overt": {
+                          "type":"boolean"
+                        },
+                        "Stop":{
+                          "type":"boolean"
+                        },
+                        "Alpha":{
+                          "type":"boolean"
+                        },
+                        "NounType":{
+                          "type":"string"
+                        },
+                        "Number":{
+                          "type":"string"
+                        },
+                        "Foreign":{
+                          "type":"boolean"
+                        }
+                      }
+                    },
+                    "misc": {
+                      "$ref": "#/definitions/misc"
+                    },
+                    "scores": {
+                      "type":"object",
+                      "properties": {
+                        "upos":{
+                          "type":"number"
+                        },
+                        "xpos": {
+                          "type":"number"
+                        },
+                        "entity":{
+                          "type":"number"
+                        }
+                      }
+                    },
+                    "lemma": {
+                      "type": "string",
+                      "pattern": "^(.+)$"
+                    },
+                    "stem": {
+                      "type": "string",
+                      "pattern": "^(.+)$"
+                    },
+                    "characterOffsetBegin": {
+                      "type": "integer",
+                      "description": "The inclusive character index in the sentence where this token begins"
+                    },
+                    "characterOffsetEnd": {
+                      "type": "integer",
+                      "description": "The exclusive character index in the sentence where this token ends"
+                    },
+                    "upos": {
+                      "type": "string",
+                      "description": "Universal part of speech tag",
+                      "examples": [
+                        "Noun",
+                        "Verb"
+                      ],
+                      "pattern": "^(.+)$"
+                    },
+                    "xpos": {
+                      "type": "string",
+                      "description": "Language-specific part of speech tag",
+                      "examples": [
+                        "NNP",
+                        "VBZ"
+                      ],
+                      "pattern": "^(.+)$"
+                    },
+                    "morphemes": {
+                      "type": "array",
+                      "minItems": 1,
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "shape": {
+                      "type": "string",
+                      "description": "Token shape",
+                      "examples": ["Xxx", "xXxxX"],
+                      "pattern": "^[xX]+$"
+                    },
+                    "entity": {
+                      "type": "string",
+                      "description": "The Named Entity label",
+                      "examples": [
+                        "GPE",
+                        "PERSON",
+                        "EMAIL"
+                      ]
+                    },
+                    "entity_iob": {
+                      "type": "string",
+                      "description": "The Named Entity IOB Schema",
+                      "examples": [
+                        "I",
+                        "O",
+                        "B"
+                      ],
+                      "pattern": "^[IOB]$"
+                    },
+                    "lang": {
+                      "type": "string",
+                      "description": "ISO 639-2 language code",
+                      "pattern": "^[a-z]{2,3}$"
+                    },
+                    "speaker": {
+                      "type": "string",
+                      "examples": [
+                        "S1",
+                        "S2"
+                      ]
+                    },
+                    "synsets": {
+                      "type": "object",
+                      "items": {
+                        "type": "object",
+                        "required": ["wordnetId"],
+                        "additionalProperties": false,
+                        "properties": {
+                          "scores": {
+                            "$ref": "#/definitions/scores"
+                          },
+                          "wordnetId": {
+                            "type": "string",
+                            "examples": [
+                              "bank.n.01",
+                              "bank.v.02"
+                            ],
+                            "pattern": "^[a-z_]+\\.[a-z]\\.\\d{2}$"
+                          },
+                          "neighbors": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "synonyms": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "antonyms": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "hypernyms": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "hyponyms": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "examples": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "definition": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "verbFrames": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["classId"],
+                        "additionalProperties": true,
+                        "properties": {
+                          "classId": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "frames": {
+                      "type": "object",
+                      "patternProperties":{
+                        "^[0-9]+$": {
+                          "required": ["name", "frameId"],
+                          "additionalProperties": true,
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "frameId": {
+                              "type": "integer"
+                            },
+                            "definition":{
+                              "type":"string"
+                            },
+                            "lu":{
+                              "type":"array"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "embeddings": {
+                      "$ref": "#/definitions/embeddings"
+                    },
+                    "characterEmbeddings": {
+                      "$id": "#/properties/documents/tokenList/items/properties/characterEmbeddings",
+                      "type": "array",
+                      "description": "Store character embeddings as 2D matrix",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "vector"
+                        ],
+                        "properties": {
+                          "model": {
+                            "type": "string",
+                            "pattern": "^(.+)$"
+                          },
+                          "vector": {
+                            "type": "array",
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "labels": {
+                      "$ref": "#/definitions/labels"
+                    }
+                  }
+                }
+              }
+            },
+            "dependencies": {
+              "$id": "#/properties/documents/dependencies",
+              "description": "Dependency graphs of any style",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["arcs", "style"],
+                "properties": {
+                  "style": {
+                    "type": "string",
+                    "examples": ["collapsed", "universal", "enhanced", "enhanced++"]
+                  },
+                  "arcs": {
+                    "type": "object",
+                    "description": "A mapping of dependent token id to a list of governors",
+                    "patternProperties":{
+                      "^[0-9]+$": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "label",
+                            "governor"
+                          ],
+                          "additionalProperties": false,
+                          "properties": {
+                            "sentenceId": {
+                              "type": "integer"
+                            },
+                            "label": {
+                              "type": "string",
+                              "examples": ["nsubj"]
+                            },
+                            "governor": {
+                              "type": "integer",
+                              "description": "Token Id corresponding to the governor"
+                            },
+                            "dependent": {
+                              "type": "integer",
+                              "description": "Token Id corresponding to the dependent"
+                            },
+                            "scores": {
+                              "$ref": "#/definitions/scores"
+                            }
+                          }
+                        }
+                      } 
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "coreferences": {
+              "$id": "#/properties/documents/coreferences",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "representative",
+                  "referents"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "scores": {
+                    "$ref": "#/definitions/scores"
+                  },
+                  "representative": {
                     "type": "object",
                     "additionalProperties": false,
                     "required": [
@@ -901,167 +878,189 @@
                       "head": {
                         "type": "integer"
                       },
-                      "type": {
+                      "entity": {
                         "type": "string",
-                        "description": "What type of reference is this",
-                        "examples": ["coreference", "anaphora"],
+                        "description": "What type of entity is this",
+                        "examples": ["PERSON", "GPE"],
                         "pattern": ".+"
                       },
                       "tokens": {
                         "$ref": "#/definitions/tokenIdList"
                       }
                     }
-                  }
-                }
-              }
-            }
-          },
-          "constituents": {
-            "$id": "#/properties/documents/constituents",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "$id": "#/properties/documents/constituents",
-              "required": [
-                "sentenceId",
-                "labeledBracketing"
-              ],
-              "additionalProperties": false,
-              "properties": {
-                "scores": {
-                  "$ref": "#/definitions/scores"
-                },
-                "sentenceId": {
-                  "type": "integer"
-                },
-                "labeledBracketing": {
-                  "type": "string",
-                  "examples": [
-                    "(ROOT (S (NP (NP (NNP Charles) (NNP Bradford)) (, ,) (NP (NP (DT an) (NN analyst)) (PP (IN with) (NP (NNP Merrill) (NNP Lynch) (NNP Capital) (NNP Markets)))) (, ,)) (VP (VBD said) (SBAR (S (NP (NNP USX)) (VP (MD may) (VP (VB have) (VP (VBN received) (NP (NP (NNS orders)) (VP (VBN lost) (PP (IN by) (NP (NP (NNS competitors)) (SBAR (WHNP (WP who)) (S (VP (VBD were) (VP (VBN involved) (PP (IN in) (NP (NN labor) (NNS contracts))) (NP-TMP (RBR earlier) (DT this) (NN year)))))))))))))))) (. .)))"
-                  ],
-                  "pattern": "^[(\\[]ROOT"
-                },
-                "enumeratedLabeledBracketing": {
-                  "type": "string",
-                  "examples": [
-                    "(ROOT_0 (S_1 (NP_2 (NP_3 (NNP_4 Charles_5 ) (NNP_6 Bradford_7 )) (, ,) (NP (NP (DT an) (NN analyst)) (PP (IN with) (NP (NNP Merrill) (NNP Lynch) (NNP Capital) (NNP Markets)))) (, ,)) (VP (VBD said) (SBAR (S (NP (NNP USX)) (VP (MD may) (VP (VB have) (VP (VBN received) (NP (NP (NNS orders)) (VP (VBN lost) (PP (IN by) (NP (NP (NNS competitors)) (SBAR (WHNP (WP who)) (S (VP (VBD were) (VP (VBN involved) (PP (IN in) (NP (NN labor) (NNS contracts))) (NP-TMP (RBR earlier) (DT this) (NN year)))))))))))))))) (. .)))"
-                  ],
-                  "pattern": "^[(\\[]ROOT_0"
-                },
-                "nodes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "tokenId",
-                      "label",
-                      "children"
-                    ],
-                    "additionalProperties": false,
-                    "properties": {
-                      "id": {
-                        "type": "integer",
-                        "description": "Enumerated id of this node"
-                      },
-                      "tokenId": {
-                        "description": "-1 if not a token",
-                        "type": "integer"
-                      },
-                      "label": {
-                        "type": "string",
-                        "description": "The syntactic label of this node. Blank if a token",
-                        "examples": [
-                          "ROOT",
-                          "",
-                          "NNP"
-                        ]
-                      },
-                      "children": {
-                        "$ref": "#/definitions/nodeIdList"
-                      },
-                      "dominates": {
-                        "$ref": "#/definitions/nodeIdList"
-                      },
-                      "precedes": {
-                        "$ref": "#/definitions/nodeIdList"
-                      },
-                      "scopes": {
-                        "$ref": "#/definitions/nodeIdList"
-                      },
-                      "cCommands": {
-                        "$ref": "#/definitions/nodeIdList"
-                      },
-                      "mCommands": {
-                        "$ref": "#/definitions/nodeIdList"
-                      },
-                      "binds": {
-                        "$ref": "#/definitions/nodeIdList"
-                      },
-                      "governs": {
-                        "$ref": "#/definitions/nodeIdList"
-                      },
-                      "scores": {
-                        "$ref": "#/definitions/scores"
+                  },
+                  "referents": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "head",
+                        "tokens"
+                      ],
+                      "properties": {
+                        "head": {
+                          "type": "integer"
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "What type of reference is this",
+                          "examples": ["coreference", "anaphora"],
+                          "pattern": ".+"
+                        },
+                        "tokens": {
+                          "$ref": "#/definitions/tokenIdList"
+                        }
                       }
                     }
                   }
                 }
               }
-            }
-          },
-          "expressions": {
-            "$id": "#/properties/documents/expressions",
-            "type": "array",
-            "description": "Multi-word expressions, idioms, etc.",
-            "items": {
-              "type": "object",
-              "required": [
-                "tokens"
-              ],
-              "additionalProperties": false,
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "tokens": {
-                  "type": "array",
-                  "minItems": 2,
-                  "items": {
+            },
+            "constituents": {
+              "$id": "#/properties/documents/constituents",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$id": "#/properties/documents/constituents",
+                "required": [
+                  "sentenceId",
+                  "labeledBracketing"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "scores": {
+                    "$ref": "#/definitions/scores"
+                  },
+                  "sentenceId": {
                     "type": "integer"
+                  },
+                  "labeledBracketing": {
+                    "type": "string",
+                    "examples": [
+                      "(ROOT (S (NP (NP (NNP Charles) (NNP Bradford)) (, ,) (NP (NP (DT an) (NN analyst)) (PP (IN with) (NP (NNP Merrill) (NNP Lynch) (NNP Capital) (NNP Markets)))) (, ,)) (VP (VBD said) (SBAR (S (NP (NNP USX)) (VP (MD may) (VP (VB have) (VP (VBN received) (NP (NP (NNS orders)) (VP (VBN lost) (PP (IN by) (NP (NP (NNS competitors)) (SBAR (WHNP (WP who)) (S (VP (VBD were) (VP (VBN involved) (PP (IN in) (NP (NN labor) (NNS contracts))) (NP-TMP (RBR earlier) (DT this) (NN year)))))))))))))))) (. .)))"
+                    ],
+                    "pattern": "^[(\\[]ROOT"
+                  },
+                  "enumeratedLabeledBracketing": {
+                    "type": "string",
+                    "examples": [
+                      "(ROOT_0 (S_1 (NP_2 (NP_3 (NNP_4 Charles_5 ) (NNP_6 Bradford_7 )) (, ,) (NP (NP (DT an) (NN analyst)) (PP (IN with) (NP (NNP Merrill) (NNP Lynch) (NNP Capital) (NNP Markets)))) (, ,)) (VP (VBD said) (SBAR (S (NP (NNP USX)) (VP (MD may) (VP (VB have) (VP (VBN received) (NP (NP (NNS orders)) (VP (VBN lost) (PP (IN by) (NP (NP (NNS competitors)) (SBAR (WHNP (WP who)) (S (VP (VBD were) (VP (VBN involved) (PP (IN in) (NP (NN labor) (NNS contracts))) (NP-TMP (RBR earlier) (DT this) (NN year)))))))))))))))) (. .)))"
+                    ],
+                    "pattern": "^[(\\[]ROOT_0"
+                  },
+                  "nodes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "tokenId",
+                        "label",
+                        "children"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "Enumerated id of this node"
+                        },
+                        "tokenId": {
+                          "description": "-1 if not a token",
+                          "type": "integer"
+                        },
+                        "label": {
+                          "type": "string",
+                          "description": "The syntactic label of this node. Blank if a token",
+                          "examples": [
+                            "ROOT",
+                            "",
+                            "NNP"
+                          ]
+                        },
+                        "children": {
+                          "$ref": "#/definitions/nodeIdList"
+                        },
+                        "dominates": {
+                          "$ref": "#/definitions/nodeIdList"
+                        },
+                        "precedes": {
+                          "$ref": "#/definitions/nodeIdList"
+                        },
+                        "scopes": {
+                          "$ref": "#/definitions/nodeIdList"
+                        },
+                        "cCommands": {
+                          "$ref": "#/definitions/nodeIdList"
+                        },
+                        "mCommands": {
+                          "$ref": "#/definitions/nodeIdList"
+                        },
+                        "binds": {
+                          "$ref": "#/definitions/nodeIdList"
+                        },
+                        "governs": {
+                          "$ref": "#/definitions/nodeIdList"
+                        },
+                        "scores": {
+                          "$ref": "#/definitions/scores"
+                        }
+                      }
+                    }
                   }
-                },
-                "type": {
-                  "type": "string",
-                  "description": "Upper case",
-                  "examples": [
-                    "PERSON",
-                    "NP",
-                    "MERONYM"
-                  ]
-                },
-                "head": {
-                  "type": "integer",
-                  "description": "The Head token of this expression"
-                },
-                "alternatePhrasing": {
-                  "type": "string",
-                  "pattern": "^(.+)$"
-                },
-                "dependency": {
-                  "type": "string",
-                  "description": "The dependency arc for this expression",
-                  "pattern": "^(.+)$"
-                },
-                "scores": {
-                  "$ref": "#/definitions/scores"
                 }
               }
-            }
-          },
-          "relations": {
-            "type": "object",
-            "additionalProperties": {
+            },
+            "expressions": {
+              "$id": "#/properties/documents/expressions",
+              "type": "array",
+              "description": "Multi-word expressions, idioms, etc.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "tokens"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "tokens": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Upper case",
+                    "examples": [
+                      "PERSON",
+                      "NP",
+                      "MERONYM"
+                    ]
+                  },
+                  "head": {
+                    "type": "integer",
+                    "description": "The Head token of this expression"
+                  },
+                  "alternatePhrasing": {
+                    "type": "string",
+                    "pattern": "^(.+)$"
+                  },
+                  "dependency": {
+                    "type": "string",
+                    "description": "The dependency arc for this expression",
+                    "pattern": "^(.+)$"
+                  },
+                  "scores": {
+                    "$ref": "#/definitions/scores"
+                  }
+                }
+              }
+            },
+            "relations": {
               "type": "object",
               "required": ["id", "predicate", "from", "to"],
               "additionalProperties": false,
