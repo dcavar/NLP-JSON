@@ -295,34 +295,31 @@
             "paragraphs": {
               "$id": "#/properties/documents/paragraphs",
               "type": "object",
-              "additionalProperties": {
-                "type": "object",
-                "required": [
-                  "id",
-                  "tokens"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                  "id": {
-                    "type": "integer",
-                    "description": "Unique paragraph ID"
-                  },
-                  "conllId": {
-                    "type": "string",
-                    "description": "Unique paragraph ID"
-                  },
-                  "tokens": {
-                    "$ref": "#/definitions/tokenIdList"
-                  },
-                  "embeddings": {
-                    "$ref": "#/definitions/embeddings"
-                  },
-                  "scores": {
-                    "$ref": "#/definitions/scores"
-                  },
-                  "labels": {
-                    "$ref": "#/definitions/labels"
-                  }
+              "required": [
+                "id",
+                "tokens"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "Unique paragraph ID"
+                },
+                "conllId": {
+                  "type": "string",
+                  "description": "Unique paragraph ID"
+                },
+                "tokens": {
+                  "$ref": "#/definitions/tokenIdList"
+                },
+                "embeddings": {
+                  "$ref": "#/definitions/embeddings"
+                },
+                "scores": {
+                  "$ref": "#/definitions/scores"
+                },
+                "labels": {
+                  "$ref": "#/definitions/labels"
                 }
               }
             },
@@ -723,8 +720,8 @@
                       }
                     },
                     "verbFrames": {
-                      "type": "object",
-                      "additionalProperties": {
+                      "type": "array",
+                      "items":{
                         "type": "object",
                         "required": ["classId"],
                         "additionalProperties": true,
